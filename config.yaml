@@ -1,0 +1,13 @@
+
+address: your_address
+private_key: your_privateKey
+
+Provider: https://polygon-rpc.com/
+GWEI_GAS: 50
+
+# Slippage is your Maximum Loss in percentage in each transaction.
+Slippage: 25
+
+# BOT checks Tax from given token address, if Token Buy/Sell fee over this, bot dont buy and exiting.
+MaxSellTax: 15
+MaxBuyTax: 15
