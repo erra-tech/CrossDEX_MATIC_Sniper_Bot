@@ -1,15 +1,21 @@
 # Polygon_Quickswap_Sniper_Bot
-Here is our Sniper bot from Erra.tech. You pay 1.5% fees on your swap amount. Automated features like Check Enabled Swapping and HoneypotCheck are included, and much more. You ALWAYS buy with Matic, the contract can convert your Matic to USDC/USDT if the token amount in that pool is higher, and buy your tokens with USDC/USDT!
-In addition, you have the ability to check your purchased tokens for loss or profit (percentage input!) and react quickly when selling.
+Cross Dex Sniper Accross The Polygon Chain!
+
+Here is our Sniper bot from Erra.network. You pay 1% fees on your swap amount, if you hold 1k+ ERRA Tokens than only 0,7%.(more volume less fees)
+Automated features like Check Enabled Swapping and HoneypotCheck are included, and much more.
+You ALWAYS buy with Matic, the contract can convert your Matic to USDC/USDT/DAI/WETH if the token amount in that pool is higher, and buy your tokens with USDC/USDT/DAI/WETH!
+In addition, you have the ability to check your purchased tokens for loss or profit (percentage input!) to Automate your  selling targets.
+
+We are working on a standalone graphical user interface that will be released soon.
 
 # Install
 First of all, you need install Python3+
 Run on Android you need Install [Termux](https://termux.com/) (Only from F-Droid is up to date!)
+
 ## Termux Setup:
 ```shell
 pkg install python git cmake
-pip install web3
-pip install halo
+pip install web3 halo numpy 
 ```
 ```shell
 Unix: $ sudo apt install python3 git cmake gcc
@@ -43,16 +49,16 @@ Here are all options with small infos:
 
 requires:
 -t or --token, Token for snipe e.g. "-t 0x34faa80fec0233e045ed4737cc152a71e490e2e3"
--a or --amount, float, Amount in Bnb to snipe e.g. "-a 0.1"
--tx or --txamount, how mutch tx you want to send? It split your BNB amount in e.g. "-tx 5"
+-a or --amount, float, Amount in MATIC to snipe e.g. "-a 0.1"
+-tx or --txamount, how mutch tx you want to send? It split your MATIC amount in e.g. "-tx 5"
 ```
 
 
   
 ```python
 Position Managemant *optional*:
--tp or --takeprofit, Percentage TakeProfit from your input BNB amount. e.g. "-tp 50" 
--sl or --stoploss, Percentage StopLoss from your input BNB amount. e.g. "-tp 50" 
+-tp or --takeprofit, Percentage TakeProfit from your input MATIC amount. e.g. "-tp 50" 
+-sl or --stoploss, Percentage StopLoss from your input MATIC amount. e.g. "-tp 50" 
 -tsl or --trailingstoploss, Percentage Trailing-Stop-loss from your first Quote "-tsl 50"
 ```
   

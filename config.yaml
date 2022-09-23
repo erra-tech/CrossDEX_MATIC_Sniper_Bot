@@ -1,13 +1,22 @@
 
-address: your_address
-private_key: your_privateKey
+# Your Address need to same as Prvate key.
+address: 0x0b9ERRA...
 
+# Your Secret Key or Private Key named, Never show it anybody!(Seeds phrase currently not supported! )
+private_key: 0x0b9ERRA....
+
+# RPC or WSS URL
 Provider: https://polygon-rpc.com/
-GWEI_GAS: 50
+
+# Set to Auto or use e.g. 200 for aways High GasPrice.
+GWEI_GAS: Auto
 
 # Slippage is your Maximum Loss in percentage in each transaction.
 Slippage: 25
 
 # BOT checks Tax from given token address, if Token Buy/Sell fee over this, bot dont buy and exiting.
-MaxSellTax: 15
-MaxBuyTax: 15
+MaxSellTax: 5
+MaxBuyTax: 5
+
+MinLiquidityUSDC: 1000
+

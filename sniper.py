@@ -1,25 +1,21 @@
 # Thanks To Tranding-Tigers for give me permission to do that!
 
 from txns import TXN
-import argparse, math, sys, yaml, requests
+import argparse, yaml
 from time import sleep
 from halo import Halo
 from style import style
 
 ascii = """
-___________                     
-\_   _____/__________________   
- |    __)_\_  __ \_  __ \__  \  
- |        \|  | \/|  | \// __ \_
-/_______  /|__|   |__|  (____  /
-        \/                   \/ 
-___________           .__       
-\__    ___/___   ____ |  |__    
-  |    |_/ __ \_/ ___\|  |  \   
-  |    |\  ___/\  \___|   Y  \  
-  |____| \___  >\___  >___|  /  
-             \/     \/     \/   
-
+   ____                             
+  / __/__________ _                 
+ / _// __/ __/ _ `/                 
+/___/_/_/_/ _\_,_/              __  
+  / |/ /__ / /__    _____  ____/ /__
+ /    / -_) __/ |/|/ / _ \/ __/  '_/
+/_/|_/\__/\__/|__,__/\___/_/ /_/\_\ 
+                                    
+                https://erra.network
 """
 
 parser = argparse.ArgumentParser(description='Set your Token and Amount example: "sniper.py -t 0x831753dd7087cac61ab5644b308642cc1c33dc13 -a 0.2 -s 15"')
@@ -38,7 +34,6 @@ parser.add_argument('-dsec', '--DisabledSwapEnabledCheck',  action="store_true",
 args = parser.parse_args()
 
 
-
 class SniperBot():
     def __init__(self):
         self.parseArgs()
@@ -54,7 +49,7 @@ class SniperBot():
 
     def SayWelcome(self):
         print(style().GREEN + ascii+ style().RESET)
-        print(style().BLUE +"""Attention, you pay a 1.5% Tax on your swap amount!"""+ style().RESET)
+        print(style().BLUE +"""Attention, you pay 1% Tax on your swap amount!"""+ style().RESET)
         print(style().BLUE +"Start Sniper Tool with following arguments:"+ style().RESET)
         print(style().BLUE + "---------------------------------"+ style().RESET)
         print(style().GREEN + "Amount for Buy:",style().BLUE + str(self.amount) + " MATIC"+ style().RESET)
@@ -78,14 +73,14 @@ class SniperBot():
         if self.token == None:
             print(style.RED+"Please Check your Token argument e.g. -t 0x831753dd7087cac61ab5644b308642cc1c33dc13")
             print("exit!")
-            sys.exit()
+            raise SystemExit
         self.amount = args.amount
         if args.nobuy != True:  
             if not args.sellonly: 
                 if self.amount == 0:
                     print(style.RED+"Please Check your Amount argument e.g. -a 0.01")
                     print("exit!")
-                    sys.exit()
+                    raise SystemExit
         self.tx = args.txamount
         self.amountForSnipe = float(self.amount) / float(self.tx)
         self.hp = args.honeypot
@@ -127,7 +122,7 @@ class SniperBot():
             spinner.stop()
             print(tx[1])
             if tx[0] != True:
-                sys.exit() 
+                raise SystemExit 
 
     def awaitSell(self):
         spinner = Halo(text='await Sell', spinner='dots')
@@ -137,7 +132,7 @@ class SniperBot():
         spinner.stop()
         print(tx[1])
         if tx[0] != True:
-            sys.exit() 
+            raise SystemExit 
 
 
     def awaitApprove(self):
@@ -148,7 +143,7 @@ class SniperBot():
         spinner.stop()
         print(tx[1])
         if tx[0] != True:
-            sys.exit() 
+            raise SystemExit 
 
 
     def awaitBlocks(self):
@@ -169,13 +164,15 @@ class SniperBot():
         while True:
             sleep(0.07)
             try:
-                self.TXN.getOutputfromMATICtoToken()[0]
+                _,_, DEX =self.TXN.getOutputfromETHtoToken()
+                name = self.TXN.getSwapName(DEX)
                 spinner.stop()
+                print(style().BLUE+ f"[DONE] Liquidity Found @{name}"+ style().RESET)
                 break
             except Exception as e:
+                print(e)
                 if "UPDATE" in str(e):
-                    print(e)
-                    sys.exit()
+                    raise SystemExit
                 continue
         print(style().BLUE+"[DONE] Liquidity is Added!"+ style().RESET)
 
@@ -186,13 +183,13 @@ class SniperBot():
         while True:
             sleep(0.07)
             try:
-                if self.TXN.checkifTokenBuyDisabled() == True:
+                if self.TXN.isTokenBuyabled() == True:
                     spinner.stop()
                     break
             except Exception as e:
                 if "UPDATE" in str(e):
                     print(e)
-                    sys.exit()
+                    raise SystemExit
                 continue
         print(style().BLUE+"[DONE] Swapping is Enabeld!"+ style().RESET)
     
@@ -203,7 +200,7 @@ class SniperBot():
         highestLastPrice = 0
         TokenBalance = round(self.TXN.get_token_balance(),5)
         while True:
-            LastPrice = float(self.TXN.getOutputfromTokentoMATIC()[0] / (10**18))
+            LastPrice = float(self.TXN.getOutputfromTokentoETH()[0] / (10**18))
             if self.tsl != 0:
                 if LastPrice > highestLastPrice:
                     highestLastPrice = LastPrice
@@ -229,33 +226,18 @@ class SniperBot():
                     self.awaitSell()
                     break
             
-
-            msg0 = str("Token Balance: " + str("{0:.5f}".format(TokenBalance)) + "| CurrentOutput: "+str("{0:.5f}".format(LastPrice))+" MATIC")
-            print("[X] New Check")
-            print(msg0)
-            #spinner.text(msg0)
-            sleep(2)
+            print("Token Balance:       " + str("{0:.5f}".format(TokenBalance)) + "     | CurrentOutput: "+str("{0:.5f}".format(LastPrice))+" MATIC", end="\r")
+            sleep(1)
 
             if self.stoploss != 0:
-                msg1 = str("Stop loss below: " + str("{0:.3f}".format(self.stoploss)) + " MATIC")
-                print(msg1)
-
-                #spinner.text(msg1)
-                sleep(2.5)
-
+                print("SL below: " + str("{0:.3f}".format(self.stoploss)) + " MATIC", end="\r")
+                sleep(1)
             if self.takeProfitOutput != 0:
-                msg2 = str("Take Profit Over: " + str("{0:.3f}".format(self.takeProfitOutput)) + " MATIC")
-                print(msg2)                
-                # spinner.text(msg2)
-                sleep(2.5)
-
+                print("TP over: " + str("{0:.3f}".format(self.takeProfitOutput)) + " MATIC", end="\r")
+                sleep(1)
             if self.tsl != 0:  
-                msg3 = str("Trailing Stop loss below: " + str("{0:.3f}".format(TrailingStopLoss)) + " MATIC")
-                print(msg3)
-                #spinner.text(msg3)
-                sleep(2.5)
-
-            
+                print("TSL below: " + str("{0:.3f}".format(TrailingStopLoss)) + " MATIC", end="\r")
+                sleep(1)
 
         print(style().BLUE+"[DONE] Position Manager Finished!"+ style().RESET)
 
@@ -267,14 +249,14 @@ class SniperBot():
             inp = input("please confirm y/n\n")
             if inp.lower() == "y": 
                 print(self.TXN.sell_tokens()[1])
-                sys.exit()
+                raise SystemExit
             else:
-                sys.exit()
+                raise SystemExit
 
         if args.buyonly:
             print(f"Start BuyOnly, buy now with {self.amountForSnipe} MATIC tokens!")
             print(self.TXN.buy_token()[1])
-            sys.exit()
+            raise SystemExit
 
         if args.nobuy != True:
             self.awaitLiquidity()
@@ -286,25 +268,33 @@ class SniperBot():
             print(style().GREEN +"Checking Token is Honeypot..." + style().RESET)
             if honeyTax[2] == True:
                 print(style.RED + "Token is Honeypot, exiting")
-                sys.exit() 
+                raise SystemExit 
             elif honeyTax[2] == False:
                 print(style().BLUE +"[DONE] Token is NOT a Honeypot!" + style().RESET)
+
         if honeyTax[1] > self.settings["MaxSellTax"]:
             print(style().RED+"Token SellTax exceeds Settings.yaml, exiting!")
-            sys.exit()
+            raise SystemExit
+
         if honeyTax[0] > self.settings["MaxBuyTax"]:
             print(style().RED+"Token BuyTax exceeds Settings.yaml, exiting!")
-            sys.exit()
+            raise SystemExit
+
+        if float(self.TXN.getLiquidityInUSDC()) <= float(self.settings["MinLiquidityUSDC"]):
+            print(style().RED+"Token MinLiquidityUSDC lower than settings, quit!")
+            raise SystemExit
+        else:
+            print(style().GREEN + "[DONE] Token Liquidity is lager than Settings!" +style().RESET)
+
         if self.wb != 0: 
             self.awaitBlocks()
+
         if args.nobuy != True:
             self.awaitBuy()
-        #sleep(15) # Give the RPC/WS some time to Index your address nonce, make it higher if " ValueError: {'code': -32000, 'message': 'nonce too low'} "
-        self.awaitApprove()
 
+        self.awaitApprove()
         if self.tsl != 0 or self.stoploss != 0 or self.takeProfitOutput != 0:
             self.awaitMangePosition()
-
-        print(style().BLUE + "[DONE] Erra.Tech Sniper Bot finish!" + style().RESET)
+        print(style().BLUE + "[DONE] Erra.Network Sniper Bot finish!" + style().RESET)
 
 SniperBot().StartUP()
