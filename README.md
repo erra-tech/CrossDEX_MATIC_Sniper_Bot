@@ -50,7 +50,6 @@ Here are all options with small infos:
 requires:
 -t or --token, Token for snipe e.g. "-t 0x34faa80fec0233e045ed4737cc152a71e490e2e3"
 -a or --amount, float, Amount in MATIC to snipe e.g. "-a 0.1"
--tx or --txamount, how mutch tx you want to send? It split your MATIC amount in e.g. "-tx 5"
 ```
 
 
@@ -68,4 +67,5 @@ Position Managemant *optional*:
 extra:
 -hp or --honeypot, if you use this Flag, your token get checks if token is honypot before buy!
 -nb or --nobuy, No Buy, Skipp buy, if you want to use only TakeProfit/StopLoss/TrailingStopLoss
+-tx or --txamount, how mutch tx you want to send? It split your MATIC amount in e.g. "-tx 5"
 ```
